@@ -8,7 +8,11 @@ export default class Player {
   private _direction: IDirection;
   private blockSize: number;
   private colisorColor: string;
-  private _speed: number;
+  private _speedXL: number;
+  private _speedXR: number;
+  private _speedYT: number;
+  private _speedYB: number;
+  private _perPixel: number;
   private _colisionMap: string[][];
   private _eventMap: string[][];
 
@@ -34,10 +38,6 @@ export default class Player {
 
   get yRMap(): number {
     return parseInt(((this._y + 0.9 * this.blockSize) / this.blockSize).toString());
-  }
-
-  get speed(): number {
-    return this._speed;
   }
 
   get direction(): IDirection {
@@ -87,10 +87,14 @@ export default class Player {
     this._eventMap = value;
   }
 
-  constructor(blockSize: number, color: string, perSpeed: number) {
+  constructor(blockSize: number, color: string, perPixel: number) {
     this.colisorColor = color;
     this.blockSize = blockSize;
-    this._speed = blockSize / perSpeed;
+    this._perPixel = perPixel;
+    this._speedXR = 0;
+    this._speedXL = 0;
+    this._speedYT = 0;
+    this._speedYB = 0;
     this._x = blockSize;
     this._y = blockSize;
     this._direction = "+y";
@@ -127,11 +131,16 @@ export default class Player {
     this.tempRenderEventRadar();
   }
 
-  public toLeft(): void {
-    this._direction = "-x";
-    this._x = this._x - this.speed;
+  public moveProgress(): void {
+    this._x += this._speedXR;
+    this._x += this._speedXL;
+    this._y += this._speedYT;
+    this._y += this._speedYB;
     if (this.checkColision()) {
-      this._x = this._x + this.speed;
+      this._x -= this._speedXR;
+      this._x -= this._speedXL;
+      this._y -= this._speedYT;
+      this._y -= this._speedYB;
     }
   }
 
@@ -146,27 +155,44 @@ export default class Player {
     }
   }
 
+  public resetSpeedXR(): void {
+    this._direction = "-x";
+    this._speedXR = 0;
+  }
+
+  public resetSpeedXL(): void {
+    this._direction = "+x";
+    this._speedXL = 0;
+  }
+
+  public resetSpeedYT(): void {
+    this._direction = "+y";
+    this._speedYT = 0;
+  }
+
+  public resetSpeedYB(): void {
+    this._direction = "-y";
+    this._speedYB = 0;
+  }
+
+  public toLeft(): void {
+    this._direction = "-x";
+    this._speedXL = -this._perPixel;
+  }
+
   public toRight(): void {
     this._direction = "+x";
-    this._x = this._x + this.speed;
-    if (this.checkColision()) {
-      this._x = this._x - this.speed;
-    }
+    this._speedXR = this._perPixel;
   }
 
   public toTop(): void {
+    console.log("aqui");
     this._direction = "-y";
-    this._y = this._y - this.speed;
-    if (this.checkColision()) {
-      this._y = this._y + this.speed;
-    }
+    this._speedYT = -this._perPixel;
   }
 
   public toDown(): void {
     this._direction = "+y";
-    this._y = this._y + this.speed;
-    if (this.checkColision()) {
-      this._y = this._y - this.speed;
-    }
+    this._speedYB = this._perPixel;
   }
 }

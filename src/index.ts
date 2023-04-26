@@ -10,18 +10,23 @@ class MeuProjeto {
     const blockSize = 30;
 
     const renderMap = new RenderMap(blockSize, map1, mapAssets);
-    const player = new Player(blockSize, "blue", 5);
+    const player = new Player(blockSize, "blue", 3);
     player.colisionMap = renderMap.map.colision;
     player.eventMap = renderMap.map.event;
 
     function gameLoop() {
       drawner.clear();
       renderMap.render();
+      player.moveProgress();
       player.render();
       //renderMap.renderColision();
+      //requestAnimationFrame(gameLoop);
     }
 
-    function keyEvents(e: KeyboardEvent): void {
+    document.onkeydown = (e: KeyboardEvent): void => {
+      console.log("'''''''''''''");
+      console.log(e.keyCode);
+      console.log("'''''''''''''");
       switch (e.keyCode) {
         case 38: // up arrow
           player.toTop();
@@ -39,9 +44,26 @@ class MeuProjeto {
           player.interative();
           break;
       }
-    }
+    };
 
-    document.onkeydown = keyEvents;
+    document.onkeyup = (e: KeyboardEvent): void => {
+      switch (e.keyCode) {
+        case 38: // up arrow
+          player.resetSpeedYT();
+          break;
+        case 40: // down arrow
+          player.resetSpeedYB();
+          break;
+        case 37: // left arrow
+          player.resetSpeedXL();
+          break;
+        case 39: // right arrow
+          player.resetSpeedXR();
+          break;
+      }
+    };
+
+    //gameLoop();
     setInterval(gameLoop, 1000 / fps);
   }
 }
