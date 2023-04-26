@@ -10,6 +10,7 @@ export class RenderMap {
     readonly map: {
       view: string[][];
       colision: string[][];
+      event: string[][];
     },
     readonly assets: {
       wall_pontas: CanvasImageSource[];
@@ -73,9 +74,12 @@ export class RenderMap {
             this.drawImage(this.assets.wall_all_down[0], indexX, indexY);
             break;
           case "x":
-            //drawner.drawStrok("gray", indexX * this.blockSize, indexY * this.blockSize, this.blockSize, this.blockSize);
+            drawner.drawStrok("gray", indexX * this.blockSize, indexY * this.blockSize, this.blockSize, this.blockSize);
             break;
-          default:
+          case "h":
+            drawner.drawStrok("green", indexX * this.blockSize, indexY * this.blockSize, this.blockSize, this.blockSize);
+            break;
+          case "g":
             drawner.drawRect("black", indexX * this.blockSize, indexY * this.blockSize, this.blockSize, this.blockSize);
             break;
         }

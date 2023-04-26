@@ -10,8 +10,9 @@ class MeuProjeto {
     const blockSize = 30;
 
     const renderMap = new RenderMap(blockSize, map1, mapAssets);
-    const player = new Player(blockSize, "red", 5);
+    const player = new Player(blockSize, "blue", 5);
     player.colisionMap = renderMap.map.colision;
+    player.eventMap = renderMap.map.event;
 
     function gameLoop() {
       drawner.clear();
@@ -23,16 +24,19 @@ class MeuProjeto {
     function keyEvents(e: KeyboardEvent): void {
       switch (e.keyCode) {
         case 38: // up arrow
-          /**if (!renderMap.colisionCheck(player.x, player.y - (blockSize - player.speed)))*/ player.toTop();
+          player.toTop();
           break;
         case 40: // down arrow
-          /**if (!renderMap.colisionCheck(player.x, player.y + (blockSize - player.speed)))*/ player.toDown();
+          player.toDown();
           break;
         case 37: // left arrow
-          /**if (!renderMap.colisionCheck(player.x - (blockSize - player.speed), player.y))*/ player.toLeft();
+          player.toLeft();
           break;
         case 39: // right arrow
-          /**if (!renderMap.colisionCheck(player.x + (blockSize - player.speed), player.y))*/ player.toRight();
+          player.toRight();
+          break;
+        case 32: // interative
+          player.interative();
           break;
       }
     }
