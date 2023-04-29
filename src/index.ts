@@ -24,9 +24,6 @@ class MeuProjeto {
     }
 
     document.onkeydown = (e: KeyboardEvent): void => {
-      console.log("'''''''''''''");
-      console.log(e.keyCode);
-      console.log("'''''''''''''");
       switch (e.keyCode) {
         case 38: // up arrow
           player.toTop();
@@ -52,7 +49,7 @@ class MeuProjeto {
           player.resetSpeedYT();
           break;
         case 40: // down arrow
-          player.resetSpeedYB();
+          player.resetSpeedYD();
           break;
         case 37: // left arrow
           player.resetSpeedXL();

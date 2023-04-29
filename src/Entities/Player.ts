@@ -8,10 +8,14 @@ export default class Player {
   private _direction: IDirection;
   private blockSize: number;
   private colisorColor: string;
+  private _leftKeyPressed: boolean;
+  private _rightKeyPressed: boolean;
+  private _topKeyPressed: boolean;
+  private _downKeyPressed: boolean;
   private _speedXL: number;
   private _speedXR: number;
   private _speedYT: number;
-  private _speedYB: number;
+  private _speedYD: number;
   private _perPixel: number;
   private _colisionMap: string[][];
   private _eventMap: string[][];
@@ -91,10 +95,14 @@ export default class Player {
     this.colisorColor = color;
     this.blockSize = blockSize;
     this._perPixel = perPixel;
-    this._speedXR = 0;
+    this._rightKeyPressed = false;
+    this._leftKeyPressed = false;
+    this._topKeyPressed = false;
+    this._downKeyPressed = false;
     this._speedXL = 0;
+    this._speedXR = 0;
     this._speedYT = 0;
-    this._speedYB = 0;
+    this._speedYD = 0;
     this._x = blockSize;
     this._y = blockSize;
     this._direction = "+y";
@@ -126,21 +134,39 @@ export default class Player {
     drawner.drawStrok("red", this.eventRadarPosition.x, this.eventRadarPosition.y, this.eventRadarPosition.w, this.eventRadarPosition.h);
   }
 
+  private updateSpeed(): void {
+    this._speedXL = this._leftKeyPressed ? -this._perPixel : 0;
+    this._speedXR = this._rightKeyPressed ? this._perPixel : 0;
+    this._speedYT = this._topKeyPressed ? -this._perPixel : 0;
+    this._speedYD = this._downKeyPressed ? this._perPixel : 0;
+  }
+
   public render(): void {
     this.drawColisionRect();
     this.tempRenderEventRadar();
   }
 
   public moveProgress(): void {
-    this._x += this._speedXR;
+    this.updateSpeed();
+    // CHECK X
     this._x += this._speedXL;
-    this._y += this._speedYT;
-    this._y += this._speedYB;
     if (this.checkColision()) {
-      this._x -= this._speedXR;
       this._x -= this._speedXL;
+    } else {
+      this._x += this._speedXR;
+      if (this.checkColision()) {
+        this._x -= this._speedXR;
+      }
+    }
+    // CHECK Y
+    this._y += this._speedYT;
+    if (this.checkColision()) {
       this._y -= this._speedYT;
-      this._y -= this._speedYB;
+    } else {
+      this._y += this._speedYD;
+      if (this.checkColision()) {
+        this._y -= this._speedYD;
+      }
     }
   }
 
@@ -155,44 +181,79 @@ export default class Player {
     }
   }
 
-  public resetSpeedXR(): void {
-    this._direction = "-x";
-    this._speedXR = 0;
+  public resetSpeedXL(): void {
+    this._leftKeyPressed = false;
+    if (this._rightKeyPressed) {
+      this.toRight();
+    }
+    if (this._topKeyPressed) {
+      this.toTop();
+    }
+    if (this._downKeyPressed) {
+      this.toDown();
+    }
   }
 
-  public resetSpeedXL(): void {
-    this._direction = "+x";
-    this._speedXL = 0;
+  public resetSpeedXR(): void {
+    this._rightKeyPressed = false;
+    if (this._leftKeyPressed) {
+      this.toLeft();
+    }
+    if (this._topKeyPressed) {
+      this.toTop();
+    }
+    if (this._downKeyPressed) {
+      this.toDown();
+    }
   }
 
   public resetSpeedYT(): void {
-    this._direction = "+y";
-    this._speedYT = 0;
+    this._topKeyPressed = false;
+    if (this._downKeyPressed) {
+      this.toDown();
+    }
+    if (this._leftKeyPressed) {
+      this.toLeft();
+    }
+    if (this._rightKeyPressed) {
+      this.toRight();
+    }
   }
 
-  public resetSpeedYB(): void {
-    this._direction = "-y";
-    this._speedYB = 0;
+  public resetSpeedYD(): void {
+    this._downKeyPressed = false;
+    if (this._topKeyPressed) {
+      this.toTop();
+    }
+    if (this._leftKeyPressed) {
+      this.toLeft();
+    }
+    if (this._rightKeyPressed) {
+      this.toRight();
+    }
   }
 
   public toLeft(): void {
-    this._direction = "-x";
-    this._speedXL = -this._perPixel;
+    this._direction = this._rightKeyPressed ? this._direction : "-x";
+    this._leftKeyPressed = true;
+    console.log(["esquerda", this._direction]);
   }
 
   public toRight(): void {
-    this._direction = "+x";
-    this._speedXR = this._perPixel;
+    this._direction = this._leftKeyPressed ? this._direction : "+x";
+    this._rightKeyPressed = true;
+    console.log(["direita", this._direction]);
   }
 
   public toTop(): void {
-    console.log("aqui");
-    this._direction = "-y";
-    this._speedYT = -this._perPixel;
+    this._direction = this._downKeyPressed ? this._direction : "-y";
+    this._topKeyPressed = true;
+    console.log(["cima", this._direction]);
   }
 
   public toDown(): void {
-    this._direction = "+y";
-    this._speedYB = this._perPixel;
+    this._direction = this._topKeyPressed ? this._direction : "+y";
+    this._downKeyPressed = true;
+    console.log(["baixo", this._direction]);
   }
 }
